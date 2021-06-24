@@ -10,21 +10,21 @@ from scipy.integrate import quad
 from dateutil.relativedelta import relativedelta
 
 
-def d1(S_k, r, vol, ttm):
-    num = log(S_k) + (r + 0.5*pow(vol, 2)) * ttm
+def d1(S, K, r, vol, ttm):
+    num = log(S/K) + (r + 0.5*pow(vol, 2)) * ttm
     den = vol * sqrt(ttm)
     if den == 0:
         return 100000000.
     return num/den
 
-def d2(S_k, r, vol, ttm):
-    return d1(S_k, r, vol, ttm) - vol * sqrt(ttm)
+def d2(S, K, r, vol, ttm):
+    return d1(S, K, r, vol, ttm) - vol * sqrt(ttm)
 
-def call(S_k, r, vol, ttm):
-    return S_k * norm.cdf(d1(S_k, r, vol, ttm)) - exp(-r * ttm) * norm.cdf(d2(S_k, r, vol, ttm))
+def call(S, K, r, vol, ttm):
+    return S * norm.cdf(d1(S, K, r, vol, ttm)) - K * exp(-r * ttm) * norm.cdf(d2(S, K, r, vol, ttm))
 
-def put(S_k, r, vol, ttm):
-    return exp(-r * ttm) * norm.cdf(-d2(S_k, r, vol, ttm)) - S_k * norm.cdf(-d1(S_k, r, vol, ttm))
+def put(S, K, r, vol, ttm):
+    return K * exp(-r * ttm) * norm.cdf(-d2(S, K, r, vol, ttm)) - S * norm.cdf(-d1(S, K, r, vol, ttm))
 
 
 # Heston model solution 1

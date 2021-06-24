@@ -22,7 +22,7 @@ def Q1(k, cf, right_lim):
     """
     integrand = lambda u: np.real( (np.exp(-u*k*1j) / (u*1j)) * 
                                   cf(u-1j) / cf(-1.0000000000001j) )  
-    return 1/2 + 1/np.pi * quad(integrand, 1e-15, right_lim, limit=2000 )[0]
+    return 1/2 + 1/np.pi * quad(integrand, 1e-15, right_lim, limit=1000)[0]
 
 def Q2(k, cf, right_lim):
     """
@@ -31,21 +31,21 @@ def Q2(k, cf, right_lim):
     right_lim: right limit of integration
     """
     integrand = lambda u: np.real( np.exp(-u*k*1j) /(u*1j) * cf(u) )
-    return 1/2 + 1/np.pi * quad(integrand, 1e-15, right_lim, limit=2000 )[0]
+    return 1/2 + 1/np.pi * quad(integrand, 1e-15, right_lim, limit=1000)[0]
 
 def fourier_call_price(kappa, theta, sigma, rho, v0, r, T, s0, K):
     k_log = np.log(s0/K)
     cf_H_b_good = partial(cf_Heston_good, t=T, v0=v0, mu=r, theta=theta, sigma=sigma, kappa=kappa, rho=rho)  
-    limit_max = 2000               
-    return s0*Q1(k, cf_H_b_good, limit_max) - K * np.exp(-r*T) * Q2(k, cf_H_b_good, limit_max)
+    limit_max = 1000               
+    return s0*Q1(k_log, cf_H_b_good, limit_max) - K * np.exp(-r*T) * Q2(k_log, cf_H_b_good, limit_max)
 
 def fourier_call_price_2(kappa, theta, sigma, rho, v0 ,r ,T, k):
     k_log = np.log(k)
     cf_H_b_good = partial(cf_Heston_good, t=T, v0=v0, mu=r, theta=theta, sigma=sigma, kappa=kappa, rho=rho)  
-    limit_max = 2000               
+    limit_max = 1000               
     return Q1(k_log, cf_H_b_good, limit_max) - k * np.exp(-r*T) * Q2(k_log, cf_H_b_good, limit_max)
 
 def fourier_put_price(kappa, theta, sigma, rho, v0 ,r ,T ,s0 ,K):              
     cf_H_b_good = partial(cf_Heston_good, t=T, v0=v0, mu=r, theta=theta, sigma=sigma, kappa=kappa, rho=rho)  
-    limit_max = 2000              
+    limit_max = 1000              
     return K * np.exp(-r*T) * (1 - Q2(k, cf_H_b_good, limit_max)) - s0 * Q1(k, cf_H_b_good, limit_max)
